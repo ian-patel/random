@@ -1,77 +1,54 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="/assets/js/vue.min.js"></script>
 <script src="/assets/js/lodash.min.js"></script>
-<script> Vue.config.devtools = true </script>
+<!-- <script> Vue.config.devtools = true </script> -->
 
-<title>Random selector</title>
-
+<title>Friday lunch</title>
+<style type="text/css">
+    [v-cloak] { display: none; }
+    .m-20 { margin-top: 20px; }
+</style>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-static-top">
-	  <div class="container">
-	    	<h3>Friday lunch</h3>
-	  </div>
+	    <div class="container">
+            <h3>Friday lunch</h3>
+	    </div>
 	</nav>
 	<div class="container" id="app" v-cloak>
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-6" v-for="type in types">
 				<div class="row">
-					<form class="form-inline">
+					<form class="form-inline col-md-12">
 					  	<div class="form-group">
-					    	<label class="" for="name">Name: </label>
-					    	<input type="text" class="form-control" id="name" placeholder="Name" v-model="name">
+					    	<input type="text" class="form-control" :placeholder="upperFirst(singular(type))" v-model="input[singular(type)]">
 					  	</div>
-					  	<button type="button" class="btn btn-default" @click="add('names')">Add</button>
+					  	<button type="button" class="btn btn-default" @click="add(type)">Add</button>
 					</form>
 				</div>
-				<div class="row" style="margin-top: 20px">
-					<div class="col-md-8">
-						<ul class="list-group">
-						  <li class="list-group-item" v-for="name in names">{{ name }}</li>
-						</ul>
-					</div>
-				</div>
-				<div class="row" style="margin-top: 20px">
-					<div class="col-md-12">
-						<button type="button" class="btn btn-default" @click="random('names')">Select random</button>
-					</div>
-				</div>
-				<div class="row" style="margin-top: 20px">
-					<div class="col-md-12">
-						<h1 v-if="randomname">{{ randomname }}</h1>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<form class="form-inline">
-				  	<div class="form-group">
-				    	<label class="" for="restaurant">Restaurant: </label>
-				    	<input type="text" class="form-control" id="restaurant" placeholder="Restaurant" v-model="restaurant">
-				  	</div>
-				  	<button type="button" class="btn btn-default" @click="add('restaurants')">Add</button>
-				</form>
-				<div class="row" style="margin-top: 20px">
-					<div class="col-md-8">
-						<ul class="list-group">
-						  <li class="list-group-item" v-for="name in restaurants">{{ name }}</li>
-						</ul>
-					</div>
-				</div>
-				<div class="row" style="margin-top: 20px">
-					<div class="col-md-12">
-						<button type="button" class="btn btn-default" @click="random('restaurants')">Select random</button>
-					</div>
-				</div>
-				<div class="row" style="margin-top: 20px">
-					<div class="col-md-12">
-						<h1 v-if="randomrestaurant">{{ randomrestaurant }}</h1>
-					</div>
-				</div>
+                <div class="row m-20">
+                    <div class="col-md-8">
+                        <ul class="list-group">
+                            <li class="list-group-item" v-for="name in getDataSet(type)">
+                                <button type="button" class="close" @click="remove(name, type)"><span aria-hidden="true">&times;</span></button>
+                                {{ name }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 v-if="selected[singular(type)]">{{ selected[singular(type)] }}</h1>
+                    </div>
+                </div>
+                <div class="row m-20">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-default" @click="random(type)">Select random</button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -82,40 +59,41 @@
 	    data: function () {
             return {
             	name: null,
-            	randomname: null,
-                names: [
-                	'Kristi',
-                	'Nico',
-                	'Grace',
-                	'Gina',
-                	'Deepak',
-                	'Ian C',
-                	'Sean',
-                	'Tony',
-                	'Jimmy',
-                	'Steve',
-                	'Wade',
-                	'Ian P',
-                ],
+                names: [ 'Kristi', 'Nico', 'Grace', 'Gina', 'Deepak', 'Ian C', 'Sean', 'Tony', 'Jimmy', 'Steve', 'Wade', 'Ian P'],
                 restaurant: null,
-                randomrestaurant: null,
-                restaurants: [
-                	'Pearl Garden',
-                	'Srimahkota',
-                	'Momo tea',
-                	'Safran',
-                	'Ichiban',
-                	'The Chef (Indian)',
-                ],
+                restaurants: [ 'Pearl Garden', 'Srimahkota', 'Momo tea', 'Safran', 'Ichiban', 'The Chef (Indian)' ],
+                selected: {
+                    name: null,
+                    restaurant: null,
+                },
+                input : {
+                    name: null,
+                    restaurant: null,
+                },
+                types: ['names', 'restaurants'],
             }
         },
         methods: {
-            add: function (to) {
-            	this[to] = _.concat(this[to], this[_.trimEnd(to, 's')]);
+            add: function (type) {
+            	this[type] = _.concat(this[type], this.input[this.singular(type)]);
             },
-            random: function (to) {
-            	this['random' + _.trimEnd(to, 's')] =  this[to][Math.floor(Math.random() * (this[to].length))];
-            }
+            remove: function (ele, type) {
+                this[type] = _.remove(this[type], function(n) {
+                    return n != ele;
+                });
+            },
+            random: function (type) {
+                this.selected[this.singular(type)] = _.sample(this[type]);
+            },
+            singular: function (value) {
+                return _.trimEnd(value, 's');
+            },
+            upperFirst: function (value) {
+                return _.upperFirst(value);
+            },
+            getDataSet: function (type) {
+                return this[type];
+            },
         },
 	});
 </script>
