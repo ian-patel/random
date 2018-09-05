@@ -76,6 +76,7 @@
         methods: {
             add: function (type) {
             	this[type] = _.concat(this[type], this.input[this.singular(type)]);
+                this.input[this.singular(type)] = null;
             },
             remove: function (ele, type) {
                 this[type] = _.remove(this[type], function(n) {
