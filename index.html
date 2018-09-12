@@ -13,11 +13,19 @@
 </style>
 </head>
 <body>
-	<nav class="navbar navbar-default navbar-static-top">
-	    <div class="container">
-            <h3>Friday lunch</h3>
-	    </div>
-	</nav>
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Friday lunch</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/history">History</a></li>
+            </ul>
+        </div>
+      </div>
+    </nav>
 	<div class="container" id="app" v-cloak>
 		<div class="row">
 			<div class="col-md-6" v-for="type in types">

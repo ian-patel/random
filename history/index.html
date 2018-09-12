@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="/assets/js/vue.min.js"></script>
+<script src="/assets/js/lodash.min.js"></script>
+<!-- <script> Vue.config.devtools = true </script> -->
+
+<title>History - Friday lunch</title>
+<style type="text/css">
+    [v-cloak] { display: none; }
+    .m-20 { margin-top: 20px; }
+</style>
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Friday lunch</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/history">History</a></li>
+            </ul>
+        </div>
+      </div>
+    </nav>
+	<div class="container" id="app" v-cloak>
+		<div class="row">
+			<div class="col-md-6">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Restaurant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(history, date) in histories">
+                            <th scope="row">{{ date }}</th>
+                            <td>{{ history }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	new Vue({
+	    el: '#app',
+	    data: function () {
+            return {
+                histories: {
+                    '31st Aug 2018': 'Srimahkota',
+                    '7th Sept 2018': 'Pearl Garden',
+                }
+            }
+        },
+        methods: {
+            //
+        },
+	});
+</script>
+</html>
