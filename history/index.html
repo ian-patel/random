@@ -49,8 +49,6 @@
 </body>
 <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
 <script>
-    var RPC = {};
-
     var vm = new Vue({
         el: '#app',
         data: function () {
@@ -61,7 +59,7 @@
         methods: {
             setHistory: function (history) {
                 this.history = history;
-            }
+            },
         },
     });
 
@@ -74,13 +72,12 @@
         storageBucket: "lunch-20895.appspot.com",
         messagingSenderId: "407622246855"
     };
-    firebase.initializeApp(config);
-        var database = firebase.database();
 
-        firebase.database().ref().once('value')
-            .then(function(snapshot) {
-                RPC = snapshot.val();
-                vm.setHistory(RPC);
-        });
+    firebase.initializeApp(config);
+
+    firebase.database().ref().once('value')
+        .then(function(snapshot) {
+            vm.setHistory(snapshot.val());
+    });
 </script>
 </html>
