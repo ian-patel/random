@@ -37,9 +37,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(history, date) in histories">
-                            <th scope="row">{{ date }}</th>
-                            <td>{{ history }}</td>
+                        <tr v-for="history in history">
+                            <th scope="row">{{ history.date }}</th>
+                            <td>{{ history.restaurant }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -47,21 +47,40 @@
 		</div>
 	</div>
 </body>
+<script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
 <script>
-	new Vue({
-	    el: '#app',
-	    data: function () {
+    var RPC = {};
+
+    var vm = new Vue({
+        el: '#app',
+        data: function () {
             return {
-                histories: {
-                    '31st Aug 2018': 'Srimahkota',
-                    '7th Sept 2018': 'Pearl Garden',
-                    '14th Sept 2018': 'Tasca',
-                }
+                history: null,
             }
         },
         methods: {
-            //
+            setHistory: function (history) {
+                this.history = history;
+            }
         },
-	});
+    });
+
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyCHKfQb4pWWL4nwUrvOthnu2S3jE-Jag0c",
+        authDomain: "lunch-20895.firebaseapp.com",
+        databaseURL: "https://lunch-20895.firebaseio.com",
+        projectId: "lunch-20895",
+        storageBucket: "lunch-20895.appspot.com",
+        messagingSenderId: "407622246855"
+    };
+    firebase.initializeApp(config);
+        var database = firebase.database();
+
+        firebase.database().ref().once('value')
+            .then(function(snapshot) {
+                RPC = snapshot.val();
+                vm.setHistory(RPC);
+        });
 </script>
 </html>
